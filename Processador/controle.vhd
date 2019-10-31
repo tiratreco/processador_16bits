@@ -30,12 +30,12 @@ process (CLK)
 begin
 if (start = '1') then
 	contador <= "0000000";
-	ciclo <= "001";
+	ciclo <= "000";
 	--pc := "0000000000000000":
 	AMUX <= '0'; OPULA <= "10"; SH <= "00"; MBR <= '0'; MAR <= '0'; RD <= '0'; ENC <= '1'; barC <= "0000"; barA <= "0101"; barB <= "0000"; wr <= '0';
 else
 if (contador = "0000000") then--0
-	AMUX <= '0'; OPULA <= "00"; SH <= "00"; MBR <= '0'; MAR <= '1'; RD <= '1'; ENC <= '0'; barC <= "0000"; barA <= "0000"; barB <= "0000"; wr <= '0';
+	AMUX <= '0'; OPULA <= "00"; SH <= "00"; MBR <= '0'; MAR <= '1'; RD <= '1'; ENC <= '0'; barC <= "0000"; barA <= "0101"; barB <= "0000"; wr <= '0';
 end if;
 if (contador = "0000001") then--1
 	AMUX <= '0'; OPULA <= "00"; SH <= "00"; MBR <= '0'; MAR <= '0'; RD <= '1'; ENC <= '1'; barC <= "0000"; barA <= "0000"; barB <= "0110"; wr <= '0';
@@ -47,10 +47,10 @@ if (contador = "0000011") then--3
 	AMUX <= '0'; OPULA <= "00"; SH <= "10"; MBR <= '0'; MAR <= '0'; RD <= '0'; ENC <= '1'; barC <= "0100"; barA <= "0011"; barB <= "0011"; wr <= '0';
 end if;
 if (contador = "0000100") then--4
-	AMUX <= '0'; OPULA <= "10"; SH <= "10"; MBR <= '0'; MAR <= '0'; RD <= '0'; ENC <= '1'; barC <= "0100"; barA <= "0100"; barB <= "0000"; wr <= '0';
+	AMUX <= '0'; OPULA <= "10"; SH <= "10"; MBR <= '0'; MAR <= '0'; RD <= '0'; ENC <= '1'; barC <= "0100"; barA <= "0100"; barB <= "0101"; wr <= '0';
 end if;
 if (contador = "0000101") then--5
-	AMUX <= '0'; OPULA <= "10"; SH <= "00"; MBR <= '0'; MAR <= '0'; RD <= '0'; ENC <= '0'; barC <= "0000"; barA <= "0100"; barB <= "0000"; wr <= '0';
+	AMUX <= '0'; OPULA <= "10"; SH <= "00"; MBR <= '0'; MAR <= '0'; RD <= '0'; ENC <= '0'; barC <= "0101"; barA <= "0100"; barB <= "0101"; wr <= '0';
 end if;
 if (contador = "0000110") then--6
 	AMUX <= '0'; OPULA <= "00"; SH <= "00"; MBR <= '0'; MAR <= '1'; RD <= '1'; ENC <= '0'; barC <= "0000"; barA <= "0000"; barB <= "0011"; wr <= '0';
@@ -74,13 +74,13 @@ if (contador = "0001100") then--12
 	AMUX <= '0'; OPULA <= "10"; SH <= "00"; MBR <= '0'; MAR <= '1'; RD <= '1'; ENC <= '0'; barC <= "0000"; barA <= "0000"; barB <= "0011"; wr <= '0';
 end if;
 if (contador = "0001101") then--13
-	AMUX <= '0'; OPULA <= "00"; SH <= "00"; MBR <= '0'; MAR <= '0'; RD <= '1'; ENC <= '0'; barC <= "0000"; barA <= "0000"; barB <= "0000"; wr <= '0';
+	AMUX <= '0'; OPULA <= "00"; SH <= "00"; MBR <= '0'; MAR <= '0'; RD <= '1'; ENC <= '0'; barC <= "0000"; barA <= "0101"; barB <= "0101"; wr <= '0';
 end if;
 if (contador = "0001110") then--14
-	AMUX <= '1'; OPULA <= "00"; SH <= "00"; MBR <= '0'; MAR <= '0'; RD <= '0'; ENC <= '1'; barC <= "0001"; barA <= "0000"; barB <= "0001"; wr <= '0';
+	AMUX <= '1'; OPULA <= "00"; SH <= "00"; MBR <= '0'; MAR <= '0'; RD <= '0'; ENC <= '1'; barC <= "0001"; barA <= "0101"; barB <= "0001"; wr <= '0';
 end if;
 if (contador = "0001111") then--15
-	AMUX <= '0'; OPULA <= "00"; SH <= "00"; MBR <= '0'; MAR <= '1'; RD <= '1'; ENC <= '0'; barC <= "0000"; barA <= "0000"; barB <= "0011"; wr <= '0';
+	AMUX <= '0'; OPULA <= "00"; SH <= "00"; MBR <= '0'; MAR <= '1'; RD <= '1'; ENC <= '0'; barC <= "0000"; barA <= "0101"; barB <= "0011"; wr <= '0';
 end if;
 if (contador = "0010000") then--16
 	AMUX <= '0'; OPULA <= "00"; SH <= "00"; MBR <= '0'; MAR <= '0'; RD <= '1'; ENC <= '1'; barC <= "0001"; barA <= "0001"; barB <= "0110"; wr <= '0';
@@ -272,10 +272,33 @@ if (contador = "1001110") then--78
 	AMUX <= '0'; OPULA <= "00"; SH <= "00"; MBR <= '0'; MAR <= '0'; RD <= '0'; ENC <= '1'; barC <= "1010"; barA <= "1010"; barB <= "0110"; wr <= '0';
 end if;
 end if;
+
 if (rising_edge(CLK)) then
 	ciclo <= ciclo + '1';
 end if;
-if (ciclo = "001") then
+
+--saltos:
+--2 ciclos
+if (ciclo = "001")then
+	if (contador = "0001110") then--14
+		contador <= "0000000";
+		ciclo <= "000";
+	end if;
+	if (contador = "0010010") then--18
+		contador <= "0000000";
+		ciclo <= "000";
+	end if;
+	if(contador = "0010000") then--16
+		contador <= contador + '1';
+		ciclo <= "000";
+	end if;
+	if (contador = "0000101" AND n = '1') then--5
+		contador <= "0001001";
+		ciclo <= "000";
+	end if;
+end if;
+--3 ciclos
+if (ciclo = "010") then
 	if (contador = "0000010" AND n = '1') then--2
 		contador <= "0011100";
 		ciclo <= "000";
@@ -288,10 +311,6 @@ if (ciclo = "001") then
 		contador <= "0001011";
 		ciclo <= "000";
 	end if;
-	if (contador = "0000101" AND n = '1') then--5
-		contador <= "0001001";
-		ciclo <= "000";
-	end if;
 	if (contador = "0001000") then--8
 		contador <= "0000000";
 		ciclo <= "000";
@@ -302,14 +321,6 @@ if (ciclo = "001") then
 	end if;
 	if (contador = "0001011" AND n = '1') then--11
 		contador <= "0001111";
-		ciclo <= "000";
-	end if;
-	if (contador = "0001110") then--14
-		contador <= "0000000";
-		ciclo <= "000";
-	end if;
-	if (contador = "0010010") then--18
-		contador <= "0000000";
 		ciclo <= "000";
 	end if;
 	if (contador = "0010011" AND n = '1') then--19
@@ -473,7 +484,7 @@ if (ciclo = "001") then
 		ciclo <= "000";
 	end if;
 	
-	if(ciclo = "001" and rising_edge(CLK)) then
+	if(ciclo = "010" and rising_edge(CLK)) then
 		contador <= contador + '1';
 		ciclo <= "000";
 	end if;
